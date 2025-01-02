@@ -3,6 +3,7 @@ package task
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -31,14 +32,23 @@ var TaskState = []Task{
 	},
 }
 
-func getList(w http.ResponseWriter, r *http.Request) error{
-	jsonSlice, err := json.Marshal(TaskState)
+func GetTask(w http.ResponseWriter, r *http.Request) error{
+	var err error
+	var jsonResponse []byte
+	idString := r.URL.Query().Get("id")
+	id, err := strconv.Atoi(idString)
+	if idString != ""{
+		jsonResponse, err = json.Marshal(TaskState[id-1])
+	} else {
+		jsonResponse, err = json.Marshal(TaskState)
+	}
 	if err != nil{
 		return err
 	}
 
 	w.WriteHeader(200)
-	w.Write(jsonSlice)
+	w.Write(jsonResponse)
 
 	return nil
 }
+

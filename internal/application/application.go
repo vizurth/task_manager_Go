@@ -1,12 +1,10 @@
 package application
 
 import (
-	"fmt"
 	"net/http"
 	"os"
-
+	"fmt"
 	"github.com/vizurth/task_manager_Go/pkg/task"
-	"golang.org/x/tools/go/analysis/passes/nilfunc"
 )
 
 
@@ -37,7 +35,7 @@ func New() *Application{
 func TaskHandle(w http.ResponseWriter, r *http.Request){
 	switch r.Method{
 		case http.MethodGet:
-			err := task.getList(w,r)
+			err := task.GetTask(w,r)
 			if err != nil{
 				http.Error(w, "Something wrong method", 500)
 			}
@@ -46,6 +44,6 @@ func TaskHandle(w http.ResponseWriter, r *http.Request){
 
 func (a *Application) RunServer() error{
 	http.HandleFunc("/api/task", TaskHandle)
-
+	fmt.Println("Server is running on port 8080...")
 	return http.ListenAndServe(":" + a.config.Addr, nil)
 }

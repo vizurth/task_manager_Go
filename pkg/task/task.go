@@ -1,1 +1,44 @@
 package task
+
+import (
+	"encoding/json"
+	"net/http"
+	"time"
+)
+
+type Task struct{
+	Title string `json:"title"`
+	Id int `json:"id"`
+	Tag string `json:"tag"`
+	Status string `json:"status"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+var TaskState = []Task{
+	{
+		Title: "Complete the report",
+		Id: 1,
+		Tag: "work",
+		Status: "in_work",
+		CreatedAt: time.Date(2025, time.January, 2, 10, 0, 0, 0, time.UTC),
+	},
+	{
+		Title: "Buy groceries",
+		Id: 2,
+		Tag: "shop",
+		Status: "done",
+		CreatedAt: time.Date(2025, time.January, 1, 15, 30, 0, 0, time.UTC),
+	},
+}
+
+func getList(w http.ResponseWriter, r *http.Request) error{
+	jsonSlice, err := json.Marshal(TaskState)
+	if err != nil{
+		return err
+	}
+
+	w.WriteHeader(200)
+	w.Write(jsonSlice)
+
+	return nil
+}

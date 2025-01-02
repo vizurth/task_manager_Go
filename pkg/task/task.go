@@ -16,6 +16,11 @@ type Task struct{
 	CreatedAt time.Time `json:"created_at"`
 }
 
+type ChangeStatus struct{
+	Id int `json:"id"`
+	Status string `json:"status"`
+}
+
 var TaskState = []Task{
 	{
 		Title: "Complete the report",
@@ -28,6 +33,13 @@ var TaskState = []Task{
 		Title: "Buy groceries",
 		Id: 2,
 		Tag: "shop",
+		Status: "done",
+		CreatedAt: time.Date(2025, time.January, 1, 15, 30, 0, 0, time.UTC),
+	},
+	{
+		Title: "Buy groceries",
+		Id: 3,
+		Tag: "сосал",
 		Status: "done",
 		CreatedAt: time.Date(2025, time.January, 1, 15, 30, 0, 0, time.UTC),
 	},
@@ -62,6 +74,47 @@ func AddTask(w http.ResponseWriter, r *http.Request) error{
 	}
 
 	TaskState = append(TaskState, *tempItem)
-	
+
+	return nil
+}
+// TODO: добавить обработку ID < 0
+func UpdateStatus(w http.ResponseWriter, r *http.Request) error{
+	changingStatus := new(ChangeStatus)
+	err := json.NewDecoder(r.Body).Decode(&changingStatus)
+	defer r.Body.Close()
+	if err != nil{
+		return err
+	}
+
+	TaskState[changingStatus.Id - 1].Status = changingStatus.Status
+
+	return nil
+}
+
+func DeleteTask(w http.ResponseWriter, r *http.Request) error{
+	var err error
+	idString := r.URL.Query().Get("id")
+	id, err := strconv.Atoi(idString)
+	var changingTaskState []Task
+
+	for _, elem := range TaskState{
+		if elem.Id > id{
+			fmt.Println(elem)
+			elem.Id = elem.Id - 1
+			changingTaskState = append(changingTaskState, elem)
+		} else {
+			fmt.Println(elem)
+			changingTaskState = append(changingTaskState, elem)
+		}
+		if elem.Id == id{
+			continue
+		}
+	}
+
+	if err != nil{
+		return err
+	}
+
+	TaskState = changingTaskState	
 	return nil
 }

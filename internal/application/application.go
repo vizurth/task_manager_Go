@@ -44,6 +44,16 @@ func TaskHandle(w http.ResponseWriter, r *http.Request){
 			if err != nil{
 				http.Error(w, "Something wrong method", 500)
 			}
+		case http.MethodPut:
+			err := task.UpdateStatus(w,r)
+			if err != nil{
+				http.Error(w, "Something wrong method", 500)
+			}
+		case http.MethodDelete:
+			err := task.DeleteTask(w,r)
+			if err != nil{
+				http.Error(w, "Something wrong method", 500)
+			}
 	}
 }
 

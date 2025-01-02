@@ -2,6 +2,7 @@ package task
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -52,3 +53,15 @@ func GetTask(w http.ResponseWriter, r *http.Request) error{
 	return nil
 }
 
+func AddTask(w http.ResponseWriter, r *http.Request) error{
+	tempItem := new(Task)
+	err := json.NewDecoder(r.Body).Decode(&tempItem)
+	defer r.Body.Close()
+	if err != nil{
+		return err
+	}
+
+	TaskState = append(TaskState, *tempItem)
+	
+	return nil
+}
